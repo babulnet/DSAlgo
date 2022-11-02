@@ -247,6 +247,7 @@ class Solution5 {
             let val1: Int = cn1?.val ?? 0
             let val2: Int = cn2?.val ?? 0
             
+            //print(val1,val2)
             let currentSum = (val1+val2+reminder)
             reminder = currentSum/10
             
@@ -274,7 +275,7 @@ class Solution5 {
     }
 }
 
-//let bb = Solution5().addTwoNumbers(LL(array: [9,9,9,9,9]).head, LL(array: [9,9,9]).head)
+let bb = Solution5().addTwoNumbers(LL(array: [2,4,6,8]).head, LL(array: [1,3,5]).head)
 
 
 class Solution6 {

@@ -278,85 +278,6 @@ func binarySearch(arr: [Int], item: Int) -> Int {
 
 //binarySearch(arr: [2,4,6,10,18,25], item: 25)
 
-func getChildern(arr:[Int],index:Int,upto: Int) -> (leftChild:Int?,rightChild:Int?) {
-    var left: Int?
-    var right:Int?
-   
-    if (2*index)+1 < upto {
-         left = arr[(2*index)+1]
-    }
-    
-    if (2*index)+2 < upto {
-         right = arr[(2*index)+2]
-    }
-    
-    return (left,right)
-}
-
-func getChildernIndices(arr:[Int],index:Int) -> (leftIndex:Int,rightIndex:Int) {
- 
-    return ((2*index)+1,(2*index)+2)
-}
-
-func maxHeap(array: inout [Int]) {
-    for i in stride(from: (array.count/2)-1, through: 0, by: -1) {
-        print("i is \(i)" )
-        heapify(arr: &array, index: i, upto: array.count)
-    }
-}
-
-func heapify(arr: inout [Int], index:Int, upto: Int) {
-    
-    var rootIndex = index
-    print("index is \(index)" )
-    
-    while true {
-        
-        var parentIndex: Int? = nil
-        let root = arr[rootIndex]
-        print("root element is \(root)" )
-        let leftindex = getChildernIndices(arr: arr, index: rootIndex).leftIndex
-        let righrIndex = getChildernIndices(arr: arr, index: rootIndex).rightIndex
-        
-        if let  leftChild = getChildern(arr: arr, index: rootIndex, upto: upto).leftChild {
-            if root < leftChild {
-                parentIndex = leftindex
-            }
-        }
-        
-        if let rightChild = getChildern(arr: arr, index: rootIndex, upto: upto).rightChild {
-            
-            if arr[parentIndex ?? rootIndex] < rightChild {
-                parentIndex = righrIndex
-            }
-        }
-        
-        if let parentIndexActual = parentIndex {
-            arr.swapAt(parentIndexActual, rootIndex)
-            rootIndex = parentIndexActual
-            print("swapped - newrootIndex is \(rootIndex)")
-        } else {
-            return
-        }
-    }
-}
-
-var array1 = [6,3,8,5,4,0,1]
-//maxHeap(array: &array1)
-
-
-
-func heapSort(array: inout [Int]) {
-    maxHeap(array: &array)
-    
-    for i in 0..<array.count {
-        array.swapAt(0, (array.count-1)-i)
-        heapify(arr: &array, index: 0, upto: ((array.count)-i)-1)
-    }
-}
-
-
-//heapSort(array: &array1)
 
 
 // lINKED lIST
@@ -509,6 +430,146 @@ l1.description
 
 l1.reverseLL()
 //l1.description
+
+class HeapSorter {
+    var array: [Int] = []
+    var compare: (Int,Int)->(Bool)
+   
+    init(_ array :[Int], compare:@escaping (Int,Int)->(Bool)) {
+        self.array = array
+        let leaf = (array.count/2) - 1
+        self.compare = compare
+       
+        for index in stride(from: leaf, through: 0, by: -1) {
+            self.hepify(index: index)
+        }
+        
+        for i in (0..<array.count) {
+            self.array.swapAt(0, (array.count - 1) - i)
+            self.hepify(index: 0, upto: (array.count - i) - 1)
+        }
+    }
+    
+    private func hepify(index: Int, upto: Int? = nil) {
+        var parent = index
+        let upTo  = upto ?? array.count
+        while true {
+            let children = getChildren(of: parent)
+            var potentialParent: Int? = nil
+            let leftIndex = children.left
+            let rightIndex = children.right
+            
+            
+            if (leftIndex < upTo) && compare(array[leftIndex],array[parent]) {
+                potentialParent = leftIndex
+            }
+            
+            if (rightIndex < upTo) && compare(array[rightIndex],array[potentialParent ?? parent]) {
+                potentialParent = rightIndex
+            }
+            
+            if let newParent = potentialParent {
+                array.swapAt(parent, newParent)
+                parent = newParent
+            } else {
+                return
+            }
+        }
+    }
+    
+    private func getChildren(of index: Int) -> (left: Int, right: Int) {
+        
+        let left = (2*index) + 1
+        let right = left + 1
+        
+        return (left,right)
+    }
+}
+let sortter = HeapSorter([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], compare: >)
+print(sortter.array)
+
+func getChildern(arr:[Int],index:Int,upto: Int) -> (leftChild:Int?,rightChild:Int?) {
+    var left: Int?
+    var right:Int?
+   
+    if (2*index)+1 < upto {
+         left = arr[(2*index)+1]
+    }
+    
+    if (2*index)+2 < upto {
+         right = arr[(2*index)+2]
+    }
+    
+    return (left,right)
+}
+
+func getChildernIndices(arr:[Int],index:Int) -> (leftIndex:Int,rightIndex:Int) {
+ 
+    return ((2*index)+1,(2*index)+2)
+}
+
+func maxHeap(array: inout [Int]) {
+    for i in stride(from: (array.count/2)-1, through: 0, by: -1) {
+        print("i is \(i)" )
+        heapify(arr: &array, index: i, upto: array.count)
+    }
+}
+
+func heapify(arr: inout [Int], index:Int, upto: Int) {
+    
+    var rootIndex = index
+    print("index is \(index)" )
+    
+    while true {
+        
+        var parentIndex: Int? = nil
+        let root = arr[rootIndex]
+        print("root element is \(root)" )
+        let leftindex = getChildernIndices(arr: arr, index: rootIndex).leftIndex
+        let righrIndex = getChildernIndices(arr: arr, index: rootIndex).rightIndex
+        
+        if let  leftChild = getChildern(arr: arr, index: rootIndex, upto: upto).leftChild {
+            if root < leftChild {
+                parentIndex = leftindex
+            }
+        }
+        
+        if let rightChild = getChildern(arr: arr, index: rootIndex, upto: upto).rightChild {
+            
+            if arr[parentIndex ?? rootIndex] < rightChild {
+                parentIndex = righrIndex
+            }
+        }
+        
+        if let parentIndexActual = parentIndex {
+            arr.swapAt(parentIndexActual, rootIndex)
+            rootIndex = parentIndexActual
+            print("swapped - newrootIndex is \(rootIndex)")
+        } else {
+            return
+        }
+    }
+}
+
+var array1 = [6,3,8,5,4,0,1]
+//maxHeap(array: &array1)
+
+func heapSort(array: inout [Int]) {
+    maxHeap(array: &array)
+    
+    for i in 0..<array.count {
+        array.swapAt(0, (array.count-1)-i)
+        heapify(arr: &array, index: 0, upto: ((array.count)-i)-1)
+    }
+}
+
+//heapSort(array: &array1)
+
+
+
+
+
+
 
 
 func findFactorial(n: Int) -> Int {
@@ -719,64 +780,3 @@ func findAllSubStrings(input: String) {
         }
     }
 }
-
-
-class HeapSorter {
-    var array: [Int] = []
-    var compare: (Int,Int)->(Bool)
-   
-    init(_ array :[Int], compare:@escaping (Int,Int)->(Bool)) {
-        self.array = array
-        let leaf = (array.count/2) - 1
-        self.compare = compare
-       
-        for index in stride(from: leaf, through: 0, by: -1) {
-            self.hepify(index: index)
-        }
-        
-        for i in (0..<array.count) {
-            self.array.swapAt(0, (array.count - 1) - i)
-            self.hepify(index: 0, upto: (array.count - i) - 1)
-        }
-    }
-    
-    private func hepify(index: Int, upto: Int? = nil) {
-        var parent = index
-        let upTo  = upto ?? array.count
-        while true {
-            let children = getChildren(of: parent)
-            var potentialParent: Int? = nil
-            let leftIndex = children.left
-            let rightIndex = children.right
-            
-            
-            if (leftIndex < upTo) && compare(array[leftIndex],array[parent]) {
-                potentialParent = leftIndex
-            }
-            
-            if (rightIndex < upTo) && compare(array[rightIndex],array[potentialParent ?? parent]) {
-                potentialParent = rightIndex
-            }
-            
-            if let newParent = potentialParent {
-                array.swapAt(parent, newParent)
-                parent = newParent
-            } else {
-                return
-            }
-        }
-    }
-    
-    private func getChildren(of index: Int) -> (left: Int, right: Int) {
-        
-        let left = (2*index) + 1
-        let right = left + 1
-        
-        return (left,right)
-    }
-}
-
-let sortter = HeapSorter([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], compare: >)
-print(sortter.array)
-
-
